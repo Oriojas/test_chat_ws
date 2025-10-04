@@ -9,11 +9,13 @@ import ConnectionStatus from "./components/ConnectionStatus.jsx";
 import CircuitBackground from "./components/CircuitBackground.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import useChat from "./hooks/useChat.js";
+import { useLanguage } from "./i18n/LanguageContext.jsx";
 
 const App = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
+  const { t, language } = useLanguage();
 
   const {
     messages,
@@ -30,6 +32,13 @@ const App = () => {
     clearError,
     getConnectionStatus,
   } = useChat();
+
+  // Force component update when language changes
+  useEffect(() => {
+    console.log("Language changed in App.jsx:", language);
+    // Force re-render by updating a state
+    setShowWelcomeModal((prev) => prev);
+  }, [language]);
 
   // App initialization
   useEffect(() => {
@@ -104,6 +113,7 @@ const App = () => {
           variants={appVariants}
           initial="hidden"
           animate={isLoaded ? "visible" : "hidden"}
+          key={language} // Force re-render when language changes
         >
           {/* Header */}
           <Header
@@ -134,6 +144,7 @@ const App = () => {
             animate={isLoaded ? "visible" : "hidden"}
           >
             <ChatContainer
+              key={language}
               messages={messages}
               currentStreamingMessage={currentStreamingMessage}
               isTyping={isTyping}
@@ -152,30 +163,31 @@ const App = () => {
               className="fixed bottom-4 right-4 bg-black/80 backdrop-blur-md rounded-lg p-4 max-w-sm z-50 border border-br-cyan/30"
             >
               <div className="text-xs font-cyber text-br-cyan mb-2">
-                DEBUG STATS
+                {t("debug.title")}
               </div>
               <div className="space-y-1 text-xs text-text-secondary">
                 <div>
-                  Estado:{" "}
+                  {t("debug.state")}:{" "}
                   <span className="text-br-cyan">{connectionState}</span>
                 </div>
                 <div>
-                  Mensajes:{" "}
+                  {t("debug.messages")}:{" "}
                   <span className="text-br-cyan">{messages.length}</span>
                 </div>
                 <div>
-                  Streaming:{" "}
+                  {t("debug.streaming")}:{" "}
                   <span className="text-br-cyan">
-                    {currentStreamingMessage ? "Sí" : "No"}
+                    {currentStreamingMessage ? t("debug.yes") : t("debug.no")}
                   </span>
                 </div>
                 <div>
-                  Reintentos:{" "}
+                  {t("debug.retries")}:{" "}
                   <span className="text-br-cyan">{reconnectAttempts}</span>
                 </div>
                 {error && (
                   <div>
-                    Error: <span className="text-red-400">{error}</span>
+                    {t("debug.error")}:{" "}
+                    <span className="text-red-400">{error}</span>
                   </div>
                 )}
               </div>
@@ -183,7 +195,7 @@ const App = () => {
                 onClick={() => setShowStats(false)}
                 className="mt-2 text-xs text-br-cyan hover:text-br-cyan-light"
               >
-                Cerrar (F12)
+                {t("debug.close")} (F12)
               </button>
             </motion.div>
           )}
@@ -204,15 +216,15 @@ const App = () => {
                     <div className="text-center">
                       <div className="text-4xl mb-4">🤖</div>
                       <h2 className="text-2xl font-bold text-gradient-cyan mb-4">
-                        ¡Bienvenido!
+                        {t("welcomeModal.title")}
                       </h2>
                       <p className="text-text-secondary mb-6 leading-relaxed">
-                        Estás conectado con{" "}
+                        {t("chat.welcome.connectStatus")}{" "}
                         <span className="text-br-gold font-semibold">
-                          Sad Robot
+                          {t("chat.welcome.sadRobot")}
                         </span>{" "}
-                        del universo Broken Robot. Soy vulnerable, glitcheado,
-                        pero estoy aquí para ayudarte.
+                        {t("chat.welcome.universe")}{" "}
+                        {t("chat.welcome.personality")}
                       </p>
                       <div className="space-y-2 text-sm text-text-secondary opacity-80">
                         <div>
@@ -220,28 +232,28 @@ const App = () => {
                           <kbd className="bg-br-gray/30 px-2 py-1 rounded text-xs">
                             Ctrl+K
                           </kbd>{" "}
-                          para limpiar chat
+                          {t("welcomeModal.shortcuts.clearChat")}
                         </div>
                         <div>
                           🔄{" "}
                           <kbd className="bg-br-gray/30 px-2 py-1 rounded text-xs">
                             Ctrl+R
                           </kbd>{" "}
-                          para reconectar
+                          {t("welcomeModal.shortcuts.reconnect")}
                         </div>
                         <div>
                           🛠️{" "}
                           <kbd className="bg-br-gray/30 px-2 py-1 rounded text-xs">
                             F12
                           </kbd>{" "}
-                          para estadísticas
+                          {t("welcomeModal.shortcuts.stats")}
                         </div>
                       </div>
                       <button
                         onClick={() => setShowWelcomeModal(false)}
                         className="mt-6 btn-primary text-sm"
                       >
-                        ¡Empecemos a chatear!
+                        {t("welcomeModal.startButton")}
                       </button>
                     </div>
                   </div>
@@ -274,10 +286,10 @@ const App = () => {
                 🤖
               </motion.div>
               <div className="text-xl font-cyber text-br-cyan">
-                Broken Robot
+                {t("loading.title")}
               </div>
               <div className="text-sm text-text-secondary mt-2">
-                Cargando interfaz...
+                {t("loading.subtitle")}
               </div>
             </div>
           </motion.div>

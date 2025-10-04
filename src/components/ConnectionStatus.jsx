@@ -1,8 +1,9 @@
 // Connection Status component for Broken Robot Chat UI
 // Shows connection state, errors, and provides reconnection controls
 
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "../i18n/LanguageContext.jsx";
 
 const ConnectionStatus = ({
   isConnected,
@@ -11,8 +12,9 @@ const ConnectionStatus = ({
   onClearError,
   onReconnect,
   isReconnecting,
-  reconnectAttempts
+  reconnectAttempts,
 }) => {
+  const { t } = useLanguage();
   // Don't show anything if connected and no errors
   if (isConnected && !error) {
     return null;
@@ -21,44 +23,44 @@ const ConnectionStatus = ({
   const getStatusConfig = () => {
     if (error) {
       return {
-        type: 'error',
-        icon: '⚠️',
-        bgColor: 'bg-red-500/10',
-        borderColor: 'border-red-500/30',
-        textColor: 'text-red-400',
-        glowColor: 'shadow-red-500/20'
+        type: "error",
+        icon: "⚠️",
+        bgColor: "bg-red-500/10",
+        borderColor: "border-red-500/30",
+        textColor: "text-red-400",
+        glowColor: "shadow-red-500/20",
       };
     }
 
     if (isReconnecting) {
       return {
-        type: 'reconnecting',
-        icon: '🔄',
-        bgColor: 'bg-yellow-500/10',
-        borderColor: 'border-yellow-500/30',
-        textColor: 'text-yellow-400',
-        glowColor: 'shadow-yellow-500/20'
+        type: "reconnecting",
+        icon: "🔄",
+        bgColor: "bg-yellow-500/10",
+        borderColor: "border-yellow-500/30",
+        textColor: "text-yellow-400",
+        glowColor: "shadow-yellow-500/20",
       };
     }
 
-    if (connectionState === 'connecting') {
+    if (connectionState === "connecting") {
       return {
-        type: 'connecting',
-        icon: '🔗',
-        bgColor: 'bg-blue-500/10',
-        borderColor: 'border-blue-500/30',
-        textColor: 'text-blue-400',
-        glowColor: 'shadow-blue-500/20'
+        type: "connecting",
+        icon: "🔗",
+        bgColor: "bg-blue-500/10",
+        borderColor: "border-blue-500/30",
+        textColor: "text-blue-400",
+        glowColor: "shadow-blue-500/20",
       };
     }
 
     return {
-      type: 'disconnected',
-      icon: '❌',
-      bgColor: 'bg-red-500/10',
-      borderColor: 'border-red-500/30',
-      textColor: 'text-red-400',
-      glowColor: 'shadow-red-500/20'
+      type: "disconnected",
+      icon: "❌",
+      bgColor: "bg-red-500/10",
+      borderColor: "border-red-500/30",
+      textColor: "text-red-400",
+      glowColor: "shadow-red-500/20",
     };
   };
 
@@ -66,18 +68,18 @@ const ConnectionStatus = ({
 
   const getMessage = () => {
     if (error) {
-      return `Error: ${error}`;
+      return `${t("connectionStatus.error")}: ${error}`;
     }
 
     if (isReconnecting) {
-      return `Reintentando conexión... (${reconnectAttempts}/5)`;
+      return `${t("connectionStatus.reconnecting")} (${reconnectAttempts}/5)`;
     }
 
-    if (connectionState === 'connecting') {
-      return 'Conectando con Sad Robot...';
+    if (connectionState === "connecting") {
+      return t("connectionStatus.connecting");
     }
 
-    return 'Desconectado del servidor';
+    return t("connectionStatus.disconnected");
   };
 
   const containerVariants = {
@@ -88,8 +90,8 @@ const ConnectionStatus = ({
       scale: 1,
       transition: {
         duration: 0.3,
-        ease: "easeOut"
-      }
+        ease: "easeOut",
+      },
     },
     exit: {
       opacity: 0,
@@ -97,9 +99,9 @@ const ConnectionStatus = ({
       scale: 0.95,
       transition: {
         duration: 0.2,
-        ease: "easeIn"
-      }
-    }
+        ease: "easeIn",
+      },
+    },
   };
 
   const iconVariants = {
@@ -108,26 +110,26 @@ const ConnectionStatus = ({
       transition: {
         duration: 2,
         repeat: Infinity,
-        ease: "linear"
-      }
+        ease: "linear",
+      },
     },
     reconnecting: {
       rotate: [0, 360],
       transition: {
         duration: 1,
         repeat: Infinity,
-        ease: "linear"
-      }
+        ease: "linear",
+      },
     },
     error: {
       x: [-2, 2, -2, 2, 0],
       transition: {
         duration: 0.5,
         repeat: Infinity,
-        repeatDelay: 2
-      }
+        repeatDelay: 2,
+      },
     },
-    default: {}
+    default: {},
   };
 
   return (
@@ -146,9 +148,15 @@ const ConnectionStatus = ({
               <motion.div
                 className={`text-xl ${config.textColor}`}
                 variants={iconVariants}
-                animate={config.type === 'connecting' ? 'connecting' :
-                        config.type === 'reconnecting' ? 'reconnecting' :
-                        config.type === 'error' ? 'error' : 'default'}
+                animate={
+                  config.type === "connecting"
+                    ? "connecting"
+                    : config.type === "reconnecting"
+                      ? "reconnecting"
+                      : config.type === "error"
+                        ? "error"
+                        : "default"
+                }
               >
                 {config.icon}
               </motion.div>
@@ -164,14 +172,14 @@ const ConnectionStatus = ({
                 </motion.p>
 
                 {/* Additional info for different states */}
-                {connectionState === 'connecting' && (
+                {connectionState === "connecting" && (
                   <motion.p
                     className="text-xs text-text-secondary mt-1"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
                   >
-                    WebSocket: ws://localhost:8765
+                    {t("header.menu.websocket")}
                   </motion.p>
                 )}
 
@@ -182,7 +190,7 @@ const ConnectionStatus = ({
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
                   >
-                    Verifica que el servidor esté ejecutándose
+                    {t("connectionStatus.verifyServer")}
                   </motion.p>
                 )}
               </div>
@@ -200,7 +208,7 @@ const ConnectionStatus = ({
                   <div className="w-16 h-1 bg-br-gray/30 rounded-full overflow-hidden">
                     <motion.div
                       className="h-full bg-gradient-to-r from-br-cyan to-br-blue rounded-full"
-                      initial={{ width: '0%' }}
+                      initial={{ width: "0%" }}
                       animate={{ width: `${(reconnectAttempts / 5) * 100}%` }}
                       transition={{ duration: 0.5 }}
                     />
@@ -221,7 +229,7 @@ const ConnectionStatus = ({
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Limpiar Error
+                  {t("connectionStatus.clearError")}
                 </motion.button>
               )}
 
@@ -235,7 +243,7 @@ const ConnectionStatus = ({
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  🔄 Reconectar
+                  {t("connectionStatus.reconnect")}
                 </motion.button>
               )}
 
@@ -249,14 +257,14 @@ const ConnectionStatus = ({
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Cancelar
+                  {t("connectionStatus.cancel")}
                 </motion.button>
               )}
             </div>
           </div>
 
           {/* Loading dots for connecting state */}
-          {(connectionState === 'connecting' || isReconnecting) && (
+          {(connectionState === "connecting" || isReconnecting) && (
             <motion.div
               className="flex justify-center mt-2"
               initial={{ opacity: 0 }}
@@ -267,15 +275,15 @@ const ConnectionStatus = ({
                 {Array.from({ length: 3 }).map((_, i) => (
                   <motion.div
                     key={i}
-                    className={`w-1 h-1 rounded-full ${config.textColor.replace('text-', 'bg-')}`}
+                    className={`w-1 h-1 rounded-full ${config.textColor.replace("text-", "bg-")}`}
                     animate={{
                       scale: [0.8, 1.2, 0.8],
-                      opacity: [0.5, 1, 0.5]
+                      opacity: [0.5, 1, 0.5],
                     }}
                     transition={{
                       duration: 1,
                       repeat: Infinity,
-                      delay: i * 0.2
+                      delay: i * 0.2,
                     }}
                   />
                 ))}
@@ -288,12 +296,12 @@ const ConnectionStatus = ({
         <motion.div
           className={`absolute inset-0 ${config.glowColor} -z-10 blur-sm`}
           animate={{
-            opacity: [0.1, 0.3, 0.1]
+            opacity: [0.1, 0.3, 0.1],
           }}
           transition={{
             duration: 2,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         />
       </motion.div>

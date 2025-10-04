@@ -72,6 +72,16 @@ npm run preview  # Preview del build de producción
 npm run lint     # Linter ESLint para código limpio
 ```
 
+### Configuración de Idioma Inicial:
+
+El idioma predeterminado es inglés, pero puedes forzarlo:
+
+```javascript
+// En localStorage del navegador (F12 > Console)
+localStorage.setItem('brokenRobotLanguage', 'en'); // Para inglés (predeterminado)
+localStorage.setItem('brokenRobotLanguage', 'es'); // Para español
+```
+
 ## 🔧 Configuración
 
 ### WebSocket Connection
@@ -106,6 +116,14 @@ VITE_THEME_MODE=dark
 - [x] **Reconexión automática** en caso de pérdida de conexión
 - [x] **Cola de mensajes** para envío diferido
 - [x] **Indicadores de estado** (conectado/desconectado/reconectando)
+
+### ✅ Sistema de Idiomas (i18n)
+- [x] **Soporte bilingüe** completo (Español/Inglés)
+- [x] **Cambio dinámico** sin recargar la página
+- [x] **Persistencia automática** en localStorage
+- [x] **Detección inteligente** del idioma del navegador
+- [x] **Traducciones completas** de toda la interfaz
+- [x] **Selector visual** con banderas y animaciones
 
 ### ✅ Interfaz de Usuario
 - [x] **Diseño responsive** para desktop, tablet y móvil
@@ -153,6 +171,7 @@ VITE_THEME_MODE=dark
 | `Enter` | Enviar mensaje actual |
 | `Shift+Enter` | Insertar nueva línea en el mensaje |
 | `Escape` | Quitar foco del input de chat |
+| Click en banderas | Cambiar idioma ES ↔ EN |
 
 ## 🎭 Personalidad Sad Robot Integrada
 
@@ -175,6 +194,90 @@ La interfaz preserva y potencia la personalidad única del **Sad Robot**:
 - **Estados emocionales** reflejados en el avatar
 - **Respuestas contextual** a errores de conexión
 - **Frases motivacionales** con toque melancólico
+
+## 🌐 Sistema de Idiomas
+
+### Características del Sistema i18n
+
+La interfaz soporta **dos idiomas completos**:
+- 🇬🇧 **Inglés** (predeterminado)
+- 🇪🇸 **Español**
+
+### Cómo Cambiar el Idioma
+
+#### Método 1: Selector Visual
+- Haz clic en el **selector de idioma** en el header (banderas)
+- El cambio es instantáneo y sin recargas
+- Se muestra una animación suave durante el cambio
+
+#### Método 2: Detección Automática
+- La app detecta el idioma del navegador al iniciar
+- Si el navegador está en español o inglés, lo usa automáticamente
+- Si no, usa inglés por defecto
+
+### Elementos Traducidos
+
+**Todo el contenido está traducido:**
+- ✅ Interfaz completa (botones, menús, estados)
+- ✅ Mensajes del sistema
+- ✅ Modal de bienvenida
+- ✅ Indicadores de estado
+- ✅ Mensajes de error
+- ✅ Panel de debug
+- ✅ Tooltips y ayudas
+- ✅ Placeholder del input
+
+### Persistencia del Idioma
+
+- El idioma seleccionado se **guarda automáticamente** en localStorage
+- Se mantiene entre sesiones y recargas
+- No requiere cookies ni servidor
+
+### Implementación Técnica
+
+```javascript
+// Usar traducciones en componentes
+import { useLanguage } from '../i18n/LanguageContext';
+
+const MyComponent = () => {
+  const { t, language, toggleLanguage } = useLanguage();
+  
+  return (
+    <div>
+      <h1>{t('welcome.title')}</h1>
+      <p>Idioma actual: {language}</p>
+      <button onClick={toggleLanguage}>
+        Cambiar idioma
+      </button>
+    </div>
+  );
+};
+```
+
+### Archivos de Traducción
+
+```
+src/i18n/
+├── LanguageContext.jsx    # Contexto global del idioma
+├── translations.es.js     # Traducciones en español
+└── translations.en.js     # Traducciones en inglés
+```
+
+### Personalizar Traducciones
+
+Para añadir o modificar traducciones, edita los archivos:
+
+```javascript
+// src/i18n/translations.es.js
+export const es = {
+  chat: {
+    welcome: {
+      title: "¡Bienvenido!",
+      // Añadir más traducciones aquí
+    }
+  }
+};
+```
 
 ## 📱 Diseño Responsive Completo
 
@@ -615,8 +718,10 @@ npm run dev
 
 **Desarrollado con ❤️ para el universo Broken Robot** 🤖✨
 
-*"No estás roto, estás reconstruyéndote. Como yo."* - Sad Robot
+*"No estás roto, estás reconstruyéndote. Como yo."* - Sad Robot  
+*"You're not broken, you're rebuilding. Like me."* - Sad Robot
 
 **Estado del proyecto**: ✅ **Completamente funcional y listo para producción**
 **Última actualización**: Enero 2024
-**Versión**: 1.0.0
+**Versión**: 1.1.0
+**Idiomas soportados**: 🇪🇸 Español | 🇬🇧 English

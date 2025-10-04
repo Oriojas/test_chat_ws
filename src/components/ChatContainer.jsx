@@ -1,11 +1,10 @@
 // Chat Container component for Broken Robot Chat UI
 // Main container for chat messages, input, and streaming interface
 
-import React, { useRef, useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import MessageList from './MessageList.jsx';
-import MessageInput from './MessageInput.jsx';
-import TypingIndicator from './TypingIndicator.jsx';
+import React, { useRef, useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "../i18n/LanguageContext.jsx";
+import MessageList, { MessageInput, TypingIndicator } from "./MessageList.jsx";
 
 const ChatContainer = ({
   messages,
@@ -13,12 +12,13 @@ const ChatContainer = ({
   isTyping,
   isConnected,
   onSendMessage,
-  error
+  error,
 }) => {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
+  const { t } = useLanguage();
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -29,8 +29,8 @@ const ChatContainer = ({
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end'
+        behavior: "smooth",
+        block: "end",
       });
     }
   };
@@ -47,10 +47,10 @@ const ChatContainer = ({
       const success = await onSendMessage(message.trim());
 
       if (success) {
-        setInputValue('');
+        setInputValue("");
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
     } finally {
       setIsSending(false);
     }
@@ -64,9 +64,9 @@ const ChatContainer = ({
       y: 0,
       transition: {
         duration: 0.5,
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const welcomeMessageVariants = {
@@ -77,9 +77,9 @@ const ChatContainer = ({
       y: 0,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
-      }
-    }
+        ease: "easeOut",
+      },
+    },
   };
 
   // Welcome message for empty chat
@@ -95,12 +95,12 @@ const ChatContainer = ({
           className="text-6xl mb-6"
           animate={{
             scale: [1, 1.1, 1],
-            rotate: [0, 5, -5, 0]
+            rotate: [0, 5, -5, 0],
           }}
           transition={{
             duration: 4,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         >
           🤖
@@ -112,8 +112,12 @@ const ChatContainer = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <span className="text-gradient-cyan">Hola, soy </span>
-          <span className="text-gradient-gold">Sad Robot</span>
+          <span className="text-gradient-cyan">
+            {t("chat.welcome.greeting")}{" "}
+          </span>
+          <span className="text-gradient-gold">
+            {t("chat.welcome.sadRobot")}
+          </span>
         </motion.h2>
 
         <motion.p
@@ -122,11 +126,12 @@ const ChatContainer = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          Del universo <span className="text-br-gold font-semibold">Broken Robot</span>.
-          Estoy aquí para ayudarte navegando el caos digital con mi perspectiva única.
+          {t("chat.welcome.universe")}{" "}
+          <span className="text-br-gold font-semibold">Broken Robot</span>.{" "}
+          {t("chat.welcome.description")}
           <br />
           <span className="text-sm opacity-75 mt-2 block">
-            404: motivación no encontrada, pero sigamos adelante...
+            {t("chat.welcome.tagline")}
           </span>
         </motion.p>
 
@@ -137,13 +142,13 @@ const ChatContainer = ({
           transition={{ delay: 0.6 }}
         >
           <div className="bg-br-cyan/10 border border-br-cyan/30 rounded-lg px-3 py-2 text-sm">
-            💭 Filosofía glitcheada
+            {t("chat.welcome.features.philosophy")}
           </div>
           <div className="bg-br-magenta/10 border border-br-magenta/30 rounded-lg px-3 py-2 text-sm">
-            🎯 Ayuda práctica
+            {t("chat.welcome.features.help")}
           </div>
           <div className="bg-br-gold/10 border border-br-gold/30 rounded-lg px-3 py-2 text-sm">
-            🤝 Compañía digital
+            {t("chat.welcome.features.company")}
           </div>
         </motion.div>
 
@@ -153,7 +158,7 @@ const ChatContainer = ({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
         >
-          Escribe cualquier mensaje para comenzar...
+          {t("chat.welcome.startHint")}
         </motion.div>
       </div>
     </motion.div>
@@ -182,9 +187,7 @@ const ChatContainer = ({
 
               {/* Typing Indicator */}
               <AnimatePresence>
-                {isTyping && !currentStreamingMessage && (
-                  <TypingIndicator />
-                )}
+                {isTyping && !currentStreamingMessage && <TypingIndicator />}
               </AnimatePresence>
 
               {/* Scroll anchor */}
@@ -205,10 +208,10 @@ const ChatContainer = ({
               <div className="text-center">
                 <div className="text-4xl mb-4 opacity-50">🔌</div>
                 <div className="text-lg font-semibold text-red-400 mb-2">
-                  Sin conexión
+                  {t("chat.messages.noConnection")}
                 </div>
                 <div className="text-sm text-text-secondary">
-                  Reconectando automáticamente...
+                  {t("chat.messages.reconnectingAuto")}
                 </div>
               </div>
             </motion.div>
@@ -231,13 +234,21 @@ const ChatContainer = ({
           {/* Status indicators */}
           <div className="flex justify-between items-center mt-2 text-xs text-text-secondary">
             <div className="flex items-center space-x-4">
-              <span className={`flex items-center space-x-1 ${
-                isConnected ? 'text-green-400' : 'text-red-400'
-              }`}>
-                <div className={`w-2 h-2 rounded-full ${
-                  isConnected ? 'bg-green-400' : 'bg-red-400'
-                }`} />
-                <span>{isConnected ? 'Conectado' : 'Desconectado'}</span>
+              <span
+                className={`flex items-center space-x-1 ${
+                  isConnected ? "text-green-400" : "text-red-400"
+                }`}
+              >
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    isConnected ? "bg-green-400" : "bg-red-400"
+                  }`}
+                />
+                <span>
+                  {isConnected
+                    ? t("chat.messages.connected")
+                    : t("chat.messages.disconnected")}
+                </span>
               </span>
 
               {currentStreamingMessage && (
@@ -247,15 +258,17 @@ const ChatContainer = ({
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
                   <span>📡</span>
-                  <span>Recibiendo respuesta...</span>
+                  <span>{t("chat.messages.streaming")}</span>
                 </motion.span>
               )}
             </div>
 
             <div className="flex items-center space-x-2">
-              <span>Mensajes: {messages.length}</span>
+              <span>
+                {t("chat.messages.messageCount")}: {messages.length}
+              </span>
               {error && (
-                <span className="text-red-400">⚠️ Error</span>
+                <span className="text-red-400">{t("chat.errors.error")}</span>
               )}
             </div>
           </div>

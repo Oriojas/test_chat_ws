@@ -1,11 +1,13 @@
 // Message List, Message Input, and Typing Indicator components
 // Complete chat components for Broken Robot Chat UI
 
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "../i18n/LanguageContext.jsx";
 
 // Message List Component
 const MessageList = ({ messages, currentStreamingMessage }) => {
+  const { t, formatTime } = useLanguage();
   const messageVariants = {
     hidden: { opacity: 0, y: 20, scale: 0.95 },
     visible: {
@@ -14,33 +16,33 @@ const MessageList = ({ messages, currentStreamingMessage }) => {
       scale: 1,
       transition: {
         duration: 0.4,
-        ease: "easeOut"
-      }
+        ease: "easeOut",
+      },
     },
     exit: {
       opacity: 0,
       scale: 0.95,
       transition: {
-        duration: 0.2
-      }
-    }
+        duration: 0.2,
+      },
+    },
   };
 
   const getMessageIcon = (message) => {
-    if (message.type === 'user') return '👤';
-    if (message.type === 'system') return '🔧';
-    if (message.isSadRobot) return '🤖';
-    return '🤖';
+    if (message.type === "user") return "👤";
+    if (message.type === "system") return "🔧";
+    if (message.isSadRobot) return "🤖";
+    return "🤖";
   };
 
   const getMessageClasses = (message) => {
-    const baseClasses = 'message-base animate-fade-in-up';
+    const baseClasses = "message-base animate-fade-in-up";
 
-    if (message.type === 'user') {
+    if (message.type === "user") {
       return `${baseClasses} message-user`;
     }
 
-    if (message.type === 'system') {
+    if (message.type === "system") {
       return `${baseClasses} bg-gradient-to-r from-br-gold/10 to-br-gold/5 border border-br-gold/20 mx-4`;
     }
 
@@ -64,8 +66,8 @@ const MessageList = ({ messages, currentStreamingMessage }) => {
               {/* Avatar */}
               <motion.div
                 className={`flex-shrink-0 ${
-                  message.type === 'user' ? 'avatar-user' : 'avatar-robot'
-                } ${message.isSadRobot ? 'glitch' : ''}`}
+                  message.type === "user" ? "avatar-user" : "avatar-robot"
+                } ${message.isSadRobot ? "glitch" : ""}`}
                 whileHover={{ scale: 1.1 }}
               >
                 {getMessageIcon(message)}
@@ -75,30 +77,37 @@ const MessageList = ({ messages, currentStreamingMessage }) => {
               <div className="flex-1 min-w-0">
                 {/* Message Header */}
                 <div className="flex items-center space-x-2 mb-1">
-                  <span className={`text-sm font-semibold ${
-                    message.type === 'user' ? 'text-br-magenta' :
-                    message.type === 'system' ? 'text-br-gold' :
-                    'text-br-cyan'
-                  }`}>
-                    {message.type === 'user' ? 'Tú' :
-                     message.type === 'system' ? 'Sistema' :
-                     'Sad Robot'}
+                  <span
+                    className={`text-sm font-semibold ${
+                      message.type === "user"
+                        ? "text-br-magenta"
+                        : message.type === "system"
+                          ? "text-br-gold"
+                          : "text-br-cyan"
+                    }`}
+                  >
+                    {message.type === "user"
+                      ? t("chat.messages.you")
+                      : message.type === "system"
+                        ? t("chat.messages.system")
+                        : t("chat.messages.sadRobot")}
                   </span>
 
                   <span className="text-xs text-text-secondary opacity-60">
-                    {new Date(message.timestamp).toLocaleTimeString('es-ES', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
+                    {formatTime(message.timestamp)}
                   </span>
                 </div>
 
                 {/* Message Text */}
-                <div className={`text-sm leading-relaxed ${
-                  message.type === 'system' ? 'text-br-gold/80' : 'text-text-primary'
-                }`}>
-                  {message.text.split('\n').map((line, index) => (
-                    <p key={index} className={index > 0 ? 'mt-2' : ''}>
+                <div
+                  className={`text-sm leading-relaxed ${
+                    message.type === "system"
+                      ? "text-br-gold/80"
+                      : "text-text-primary"
+                  }`}
+                >
+                  {message.text.split("\n").map((line, index) => (
+                    <p key={index} className={index > 0 ? "mt-2" : ""}>
                       {line}
                     </p>
                   ))}
@@ -124,10 +133,10 @@ const MessageList = ({ messages, currentStreamingMessage }) => {
                 className="avatar-robot flex-shrink-0"
                 animate={{
                   boxShadow: [
-                    '0 0 10px rgba(0, 212, 255, 0.3)',
-                    '0 0 20px rgba(0, 212, 255, 0.6)',
-                    '0 0 10px rgba(0, 212, 255, 0.3)'
-                  ]
+                    "0 0 10px rgba(0, 212, 255, 0.3)",
+                    "0 0 20px rgba(0, 212, 255, 0.6)",
+                    "0 0 10px rgba(0, 212, 255, 0.3)",
+                  ],
                 }}
                 transition={{ duration: 1.5, repeat: Infinity }}
               >
@@ -137,7 +146,7 @@ const MessageList = ({ messages, currentStreamingMessage }) => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-2 mb-1">
                   <span className="text-sm font-semibold text-br-cyan">
-                    Sad Robot
+                    {t("chat.messages.sadRobot")}
                   </span>
                   <motion.div
                     className="flex items-center space-x-1"
@@ -151,10 +160,11 @@ const MessageList = ({ messages, currentStreamingMessage }) => {
                 </div>
 
                 <div className="text-sm leading-relaxed text-text-primary">
-                  {currentStreamingMessage.split('\n').map((line, index) => (
-                    <p key={index} className={index > 0 ? 'mt-2' : ''}>
+                  {currentStreamingMessage.split("\n").map((line, index) => (
+                    <p key={index} className={index > 0 ? "mt-2" : ""}>
                       {line}
-                      {index === currentStreamingMessage.split('\n').length - 1 && (
+                      {index ===
+                        currentStreamingMessage.split("\n").length - 1 && (
                         <motion.span
                           className="inline-block ml-1 w-2 h-4 bg-br-cyan"
                           animate={{ opacity: [0, 1, 0] }}
@@ -180,8 +190,9 @@ const MessageInput = ({
   onSend,
   isConnected,
   isSending,
-  disabled
+  disabled,
 }) => {
+  const { t } = useLanguage();
   const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef(null);
 
@@ -193,7 +204,7 @@ const MessageInput = ({
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
     }
@@ -202,8 +213,8 @@ const MessageInput = ({
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+      textarea.style.height = "auto";
+      textarea.style.height = Math.min(textarea.scrollHeight, 120) + "px";
     }
   };
 
@@ -214,14 +225,14 @@ const MessageInput = ({
   const inputVariants = {
     focused: {
       scale: 1.02,
-      boxShadow: '0 0 25px rgba(0, 212, 255, 0.4)',
-      transition: { duration: 0.2 }
+      boxShadow: "0 0 25px rgba(0, 212, 255, 0.4)",
+      transition: { duration: 0.2 },
     },
     unfocused: {
       scale: 1,
-      boxShadow: '0 0 10px rgba(0, 212, 255, 0.1)',
-      transition: { duration: 0.2 }
-    }
+      boxShadow: "0 0 10px rgba(0, 212, 255, 0.1)",
+      transition: { duration: 0.2 },
+    },
   };
 
   const buttonVariants = {
@@ -230,8 +241,8 @@ const MessageInput = ({
     tap: { scale: 0.95 },
     sending: {
       rotate: 360,
-      transition: { duration: 1, repeat: Infinity, ease: 'linear' }
-    }
+      transition: { duration: 1, repeat: Infinity, ease: "linear" },
+    },
   };
 
   return (
@@ -241,7 +252,7 @@ const MessageInput = ({
         <motion.div
           className="flex-1 relative"
           variants={inputVariants}
-          animate={isFocused ? 'focused' : 'unfocused'}
+          animate={isFocused ? "focused" : "unfocused"}
         >
           <textarea
             ref={textareaRef}
@@ -252,8 +263,8 @@ const MessageInput = ({
             onBlur={() => setIsFocused(false)}
             placeholder={
               isConnected
-                ? "Escribe tu mensaje a Sad Robot..."
-                : "Conectando..."
+                ? t("chat.input.placeholder")
+                : t("chat.input.placeholderDisconnected")
             }
             disabled={disabled}
             className="chat-input min-h-[50px] max-h-[120px]"
@@ -275,8 +286,8 @@ const MessageInput = ({
           disabled={!value.trim() || disabled}
           className={`p-3 rounded-xl transition-all duration-300 ${
             !value.trim() || disabled
-              ? 'bg-br-gray/20 text-text-secondary cursor-not-allowed'
-              : 'btn-primary'
+              ? "bg-br-gray/20 text-text-secondary cursor-not-allowed"
+              : "btn-primary"
           }`}
           variants={buttonVariants}
           initial="idle"
@@ -284,20 +295,26 @@ const MessageInput = ({
           whileTap={!disabled && value.trim() ? "tap" : "idle"}
           animate={isSending ? "sending" : "idle"}
         >
-          {isSending ? '⏳' : '🚀'}
+          {isSending ? "⏳" : "🚀"}
         </motion.button>
       </div>
 
       {/* Input hints */}
       <div className="flex justify-between items-center mt-2 text-xs text-text-secondary opacity-70">
         <div>
-          <kbd className="bg-br-gray/20 px-1 py-0.5 rounded text-xs">Enter</kbd> para enviar,{' '}
-          <kbd className="bg-br-gray/20 px-1 py-0.5 rounded text-xs">Shift+Enter</kbd> nueva línea
+          <kbd className="bg-br-gray/20 px-1 py-0.5 rounded text-xs">
+            {t("chat.input.hints.enter")}
+          </kbd>{" "}
+          {t("chat.input.hints.toSend")}{" "}
+          <kbd className="bg-br-gray/20 px-1 py-0.5 rounded text-xs">
+            {t("chat.input.hints.shiftEnter")}
+          </kbd>{" "}
+          {t("chat.input.hints.newLine")}
         </div>
 
         {!isConnected && (
           <div className="text-red-400 text-xs">
-            ⚠️ Sin conexión
+            {t("chat.input.noConnection")}
           </div>
         )}
       </div>
@@ -307,20 +324,21 @@ const MessageInput = ({
 
 // Typing Indicator Component
 const TypingIndicator = () => {
+  const { t } = useLanguage();
   const containerVariants = {
     hidden: { opacity: 0, y: 10, scale: 0.95 },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { duration: 0.3, ease: "easeOut" }
+      transition: { duration: 0.3, ease: "easeOut" },
     },
     exit: {
       opacity: 0,
       y: 10,
       scale: 0.95,
-      transition: { duration: 0.2, ease: "easeIn" }
-    }
+      transition: { duration: 0.2, ease: "easeIn" },
+    },
   };
 
   const dotVariants = {
@@ -330,9 +348,9 @@ const TypingIndicator = () => {
       transition: {
         duration: 1,
         repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
+        ease: "easeInOut",
+      },
+    },
   };
 
   return (
@@ -348,10 +366,10 @@ const TypingIndicator = () => {
           className="avatar-robot flex-shrink-0"
           animate={{
             boxShadow: [
-              '0 0 5px rgba(0, 212, 255, 0.2)',
-              '0 0 15px rgba(0, 212, 255, 0.4)',
-              '0 0 5px rgba(0, 212, 255, 0.2)'
-            ]
+              "0 0 5px rgba(0, 212, 255, 0.2)",
+              "0 0 15px rgba(0, 212, 255, 0.4)",
+              "0 0 5px rgba(0, 212, 255, 0.2)",
+            ],
           }}
           transition={{ duration: 2, repeat: Infinity }}
         >
@@ -361,17 +379,15 @@ const TypingIndicator = () => {
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2 mb-2">
             <span className="text-sm font-semibold text-br-cyan">
-              Sad Robot
+              {t("chat.messages.sadRobot")}
             </span>
             <span className="text-xs text-text-secondary opacity-60">
-              escribiendo...
+              {t("chat.messages.typing")}
             </span>
           </div>
 
           <div className="flex items-center space-x-1">
-            <span className="text-sm text-text-secondary mr-2">
-              💭
-            </span>
+            <span className="text-sm text-text-secondary mr-2">💭</span>
 
             {/* Animated dots */}
             <div className="flex items-center space-x-1">
@@ -392,7 +408,7 @@ const TypingIndicator = () => {
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              procesando respuesta...
+              {t("chat.messages.processing")}
             </motion.span>
           </div>
         </div>

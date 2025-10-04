@@ -1,8 +1,10 @@
 // Header component for Broken Robot Chat UI
 // Contains branding, connection status, and action buttons
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { useLanguage } from "../i18n/LanguageContext.jsx";
+import LanguageSelector from "./LanguageSelector.jsx";
 
 const Header = ({
   isConnected,
@@ -10,17 +12,18 @@ const Header = ({
   reconnectAttempts,
   onReconnect,
   onClearMessages,
-  onToggleStats
+  onToggleStats,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const { t } = useLanguage();
 
   const headerVariants = {
     hidden: { y: -50, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
-      transition: { duration: 0.5, ease: "easeOut" }
-    }
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
   };
 
   const logoVariants = {
@@ -28,30 +31,30 @@ const Header = ({
     hover: {
       scale: 1.05,
       rotate: [0, -2, 2, 0],
-      transition: { duration: 0.3 }
+      transition: { duration: 0.3 },
     },
-    tap: { scale: 0.95 }
+    tap: { scale: 0.95 },
   };
 
   const getConnectionColor = () => {
     switch (connectionState) {
-      case 'connected':
-        return 'text-green-400';
-      case 'connecting':
-        return 'text-yellow-400';
+      case "connected":
+        return "text-green-400";
+      case "connecting":
+        return "text-yellow-400";
       default:
-        return 'text-red-400';
+        return "text-red-400";
     }
   };
 
   const getConnectionIcon = () => {
     switch (connectionState) {
-      case 'connected':
-        return '✅';
-      case 'connecting':
-        return '🔄';
+      case "connected":
+        return "✅";
+      case "connecting":
+        return "🔄";
       default:
-        return '❌';
+        return "❌";
     }
   };
 
@@ -78,12 +81,16 @@ const Header = ({
                 className="w-12 h-12 bg-gradient-to-br from-br-gray to-br-gray-light rounded-full flex items-center justify-center border-2 border-br-cyan/50 shadow-glow-soft"
                 animate={{
                   boxShadow: [
-                    '0 0 10px rgba(0, 212, 255, 0.3)',
-                    '0 0 20px rgba(0, 212, 255, 0.5)',
-                    '0 0 10px rgba(0, 212, 255, 0.3)'
-                  ]
+                    "0 0 10px rgba(0, 212, 255, 0.3)",
+                    "0 0 20px rgba(0, 212, 255, 0.5)",
+                    "0 0 10px rgba(0, 212, 255, 0.3)",
+                  ],
                 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               >
                 {/* Robot Face */}
                 <div className="text-2xl relative">
@@ -119,7 +126,7 @@ const Header = ({
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
               >
-                Chat Interface v1.0
+                {t("header.version")}
               </motion.p>
             </div>
           </motion.div>
@@ -135,9 +142,12 @@ const Header = ({
             >
               <span className="text-sm">{getConnectionIcon()}</span>
               <span className={`text-sm font-cyber ${getConnectionColor()}`}>
-                {connectionState === 'connected' && 'Conectado'}
-                {connectionState === 'connecting' && 'Conectando...'}
-                {connectionState === 'disconnected' && 'Desconectado'}
+                {connectionState === "connected" &&
+                  t("header.status.connected")}
+                {connectionState === "connecting" &&
+                  t("header.status.connecting")}
+                {connectionState === "disconnected" &&
+                  t("header.status.disconnected")}
               </span>
               {reconnectAttempts > 0 && (
                 <span className="text-xs text-text-secondary">
@@ -158,9 +168,12 @@ const Header = ({
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  🔄 Reconectar
+                  {t("header.buttons.reconnect")}
                 </motion.button>
               )}
+
+              {/* Language Selector */}
+              <LanguageSelector position="header" showLabel={true} />
 
               {/* Menu Toggle */}
               <motion.button
@@ -194,7 +207,7 @@ const Header = ({
                       className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-br-cyan/10 text-text-secondary hover:text-br-cyan transition-colors flex items-center space-x-2"
                     >
                       <span>🗑️</span>
-                      <span>Limpiar Chat</span>
+                      <span>{t("header.menu.clearChat")}</span>
                       <span className="ml-auto text-xs opacity-60">Ctrl+K</span>
                     </button>
 
@@ -206,7 +219,7 @@ const Header = ({
                       className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-br-cyan/10 text-text-secondary hover:text-br-cyan transition-colors flex items-center space-x-2"
                     >
                       <span>📊</span>
-                      <span>Estadísticas</span>
+                      <span>{t("header.menu.stats")}</span>
                       <span className="ml-auto text-xs opacity-60">F12</span>
                     </button>
 
@@ -219,17 +232,30 @@ const Header = ({
                         className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-br-cyan/10 text-text-secondary hover:text-br-cyan transition-colors flex items-center space-x-2"
                       >
                         <span>🔄</span>
-                        <span>Reconectar</span>
-                        <span className="ml-auto text-xs opacity-60">Ctrl+R</span>
+                        <span>{t("header.menu.reconnect")}</span>
+                        <span className="ml-auto text-xs opacity-60">
+                          Ctrl+R
+                        </span>
                       </button>
                     )}
 
                     <div className="border-t border-br-cyan/20 mt-2 pt-2">
                       <div className="px-3 py-1 text-xs text-text-secondary">
-                        <div>Estado: <span className={`font-cyber ${getConnectionColor()}`}>
-                          {connectionState}
-                        </span></div>
-                        <div>WebSocket: ws://localhost:8765</div>
+                        <div>
+                          {t("header.menu.status")}:{" "}
+                          <span
+                            className={`font-cyber ${getConnectionColor()}`}
+                          >
+                            {connectionState === "connected"
+                              ? t("header.status.connected")
+                              : connectionState === "connecting"
+                                ? t("header.status.connecting")
+                                : connectionState === "disconnected"
+                                  ? t("header.status.disconnected")
+                                  : connectionState}
+                          </span>
+                        </div>
+                        <div>{t("header.menu.websocket")}</div>
                       </div>
                     </div>
                   </div>
@@ -256,14 +282,14 @@ const Header = ({
         className="absolute bottom-0 left-0 w-full h-px bg-br-cyan/30"
         animate={{
           scaleX: [0, 1, 0],
-          opacity: [0, 0.8, 0]
+          opacity: [0, 0.8, 0],
         }}
         transition={{
           duration: 3,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
-        style={{ transformOrigin: 'left' }}
+        style={{ transformOrigin: "left" }}
       />
     </motion.header>
   );

@@ -1,161 +1,237 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/robot-favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Broken Robot Chat - Interface</title>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/robot-favicon.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Broken Robot Chat</title>
 
-    <!-- Preload fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <!-- Preload fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
 
-    <style>
-      /* Loading screen styles */
-      .loading-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #0A0E1B;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        transition: opacity 0.5s ease-out;
-      }
-
-      .loading-robot {
-        font-size: 4rem;
-        color: #00D4FF;
-        animation: pulse 1.5s ease-in-out infinite;
-      }
-
-      .loading-text {
-        color: #FFFFFF;
-        font-family: 'JetBrains Mono', monospace;
-        margin-top: 1rem;
-        font-size: 1.2rem;
-        opacity: 0.8;
-      }
-
-      @keyframes pulse {
-        0%, 100% {
-          transform: scale(1);
-          filter: drop-shadow(0 0 10px #00D4FF);
-        }
-        50% {
-          transform: scale(1.05);
-          filter: drop-shadow(0 0 20px #00D4FF);
-        }
-      }
-
-      /* Hide loading when app loads */
-      .app-loaded .loading-screen {
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      /* Prevent flash of unstyled content */
-      body {
-        margin: 0;
-        background-color: #0A0E1B;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        color: #FFFFFF;
-        overflow-x: hidden;
-      }
-
-      /* Circuit background animation */
-      .circuit-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image:
-          linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px),
-          linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px);
-        background-size: 50px 50px;
-        animation: circuit-drift 20s linear infinite;
-        z-index: -1;
-      }
-
-      @keyframes circuit-drift {
-        0% { transform: translate(0, 0); }
-        100% { transform: translate(50px, 50px); }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loading-screen">
-      <div class="text-center">
-        <div class="loading-robot">🤖</div>
-        <div class="loading-text">Iniciando Broken Robot...</div>
-        <div class="loading-text mt-2 text-sm opacity-60">Conectando sistemas...</div>
-      </div>
-    </div>
-
-    <!-- Circuit Background -->
-    <div class="circuit-bg"></div>
-
-    <!-- React App Root -->
-    <div id="root"></div>
-
-    <!-- Robot favicon as inline SVG -->
-    <svg width="0" height="0" style="position: absolute;">
-      <defs>
-        <symbol id="robot-icon" viewBox="0 0 32 32">
-          <circle cx="16" cy="16" r="14" fill="#424242" stroke="#00D4FF" stroke-width="2"/>
-          <path d="M12 12 L16 16 L12 20" fill="none" stroke="#FFD700" stroke-width="2"/>
-          <circle cx="22" cy="18" r="2" fill="#00BCD4"/>
-          <path d="M10 24 Q16 26 22 24" fill="none" stroke="#666" stroke-width="1"/>
-        </symbol>
-      </defs>
-    </svg>
-
-    <script type="module" src="/src/main.jsx"></script>
-
-    <script>
-      // Remove loading screen when React app loads
-      window.addEventListener('load', () => {
-        setTimeout(() => {
-          document.body.classList.add('app-loaded');
-          setTimeout(() => {
-            const loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) {
-              loadingScreen.remove();
+        <style>
+            /* Loading screen styles */
+            .loading-screen {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #0a0e1b;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+                transition: opacity 0.5s ease-out;
             }
-          }, 500);
-        }, 1000);
-      });
 
-      // Prevent right-click context menu for cleaner UX
-      document.addEventListener('contextmenu', e => {
-        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-          e.preventDefault();
-        }
-      });
+            .loading-robot {
+                font-size: 4rem;
+                color: #00d4ff;
+                animation: pulse 1.5s ease-in-out infinite;
+            }
 
-      // Add keyboard shortcuts
-      document.addEventListener('keydown', (e) => {
-        // Ctrl/Cmd + K to focus chat input
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-          e.preventDefault();
-          const chatInput = document.querySelector('[data-chat-input]');
-          if (chatInput) chatInput.focus();
-        }
+            .loading-text {
+                color: #ffffff;
+                font-family: "JetBrains Mono", monospace;
+                margin-top: 1rem;
+                font-size: 1.2rem;
+                opacity: 0.8;
+            }
 
-        // ESC to clear chat input
-        if (e.key === 'Escape') {
-          const chatInput = document.querySelector('[data-chat-input]');
-          if (chatInput && document.activeElement === chatInput) {
-            chatInput.blur();
-          }
-        }
-      });
-    </script>
-  </body>
+            @keyframes pulse {
+                0%,
+                100% {
+                    transform: scale(1);
+                    filter: drop-shadow(0 0 10px #00d4ff);
+                }
+                50% {
+                    transform: scale(1.05);
+                    filter: drop-shadow(0 0 20px #00d4ff);
+                }
+            }
+
+            /* Hide loading when app loads */
+            .app-loaded .loading-screen {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            /* Prevent flash of unstyled content */
+            body {
+                margin: 0;
+                background-color: #0a0e1b;
+                font-family:
+                    "Inter",
+                    system-ui,
+                    -apple-system,
+                    sans-serif;
+                color: #ffffff;
+                overflow-x: hidden;
+            }
+
+            /* Circuit background animation */
+            .circuit-bg {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image:
+                    linear-gradient(
+                        90deg,
+                        rgba(0, 212, 255, 0.1) 1px,
+                        transparent 1px
+                    ),
+                    linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px);
+                background-size: 50px 50px;
+                animation: circuit-drift 20s linear infinite;
+                z-index: -1;
+            }
+
+            @keyframes circuit-drift {
+                0% {
+                    transform: translate(0, 0);
+                }
+                100% {
+                    transform: translate(50px, 50px);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loading-screen">
+            <div class="text-center">
+                <div class="loading-robot">🤖</div>
+                <div class="loading-text" id="loading-text-main">
+                    Iniciando Broken Robot...
+                </div>
+                <div
+                    class="loading-text mt-2 text-sm opacity-60"
+                    id="loading-text-sub"
+                >
+                    Conectando sistemas...
+                </div>
+            </div>
+        </div>
+
+        <!-- Circuit Background -->
+        <div class="circuit-bg"></div>
+
+        <!-- React App Root -->
+        <div id="root"></div>
+
+        <!-- Robot favicon as inline SVG -->
+        <svg width="0" height="0" style="position: absolute">
+            <defs>
+                <symbol id="robot-icon" viewBox="0 0 32 32">
+                    <circle
+                        cx="16"
+                        cy="16"
+                        r="14"
+                        fill="#424242"
+                        stroke="#00D4FF"
+                        stroke-width="2"
+                    />
+                    <path
+                        d="M12 12 L16 16 L12 20"
+                        fill="none"
+                        stroke="#FFD700"
+                        stroke-width="2"
+                    />
+                    <circle cx="22" cy="18" r="2" fill="#00BCD4" />
+                    <path
+                        d="M10 24 Q16 26 22 24"
+                        fill="none"
+                        stroke="#666"
+                        stroke-width="1"
+                    />
+                </symbol>
+            </defs>
+        </svg>
+
+        <script type="module" src="/src/main.jsx"></script>
+
+        <script>
+            // Detect initial language preference
+            const detectInitialLanguage = () => {
+                const savedLang = localStorage.getItem("brokenRobotLanguage");
+                if (savedLang) return savedLang;
+
+                const browserLang = navigator.language.toLowerCase();
+                if (browserLang.startsWith("es")) return "es";
+                if (browserLang.startsWith("en")) return "en";
+                return "es"; // Default to Spanish
+            };
+
+            // Set initial language texts
+            const initLang = detectInitialLanguage();
+            document.documentElement.lang = initLang;
+
+            // Update loading texts based on language
+            window.addEventListener("DOMContentLoaded", () => {
+                const mainText = document.getElementById("loading-text-main");
+                const subText = document.getElementById("loading-text-sub");
+
+                if (initLang === "en") {
+                    if (mainText)
+                        mainText.textContent = "Starting Broken Robot...";
+                    if (subText) subText.textContent = "Connecting systems...";
+                    document.title = "Broken Robot Chat - Interface";
+                } else {
+                    document.title = "Broken Robot Chat - Interfaz";
+                }
+            });
+
+            // Remove loading screen when React app loads
+            window.addEventListener("load", () => {
+                setTimeout(() => {
+                    document.body.classList.add("app-loaded");
+                    setTimeout(() => {
+                        const loadingScreen =
+                            document.getElementById("loading-screen");
+                        if (loadingScreen) {
+                            loadingScreen.remove();
+                        }
+                    }, 500);
+                }, 1000);
+            });
+
+            // Prevent right-click context menu for cleaner UX
+            document.addEventListener("contextmenu", (e) => {
+                if (
+                    e.target.tagName !== "INPUT" &&
+                    e.target.tagName !== "TEXTAREA"
+                ) {
+                    e.preventDefault();
+                }
+            });
+
+            // Add keyboard shortcuts
+            document.addEventListener("keydown", (e) => {
+                // Ctrl/Cmd + K to focus chat input
+                if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+                    e.preventDefault();
+                    const chatInput =
+                        document.querySelector("[data-chat-input]");
+                    if (chatInput) chatInput.focus();
+                }
+
+                // ESC to clear chat input
+                if (e.key === "Escape") {
+                    const chatInput =
+                        document.querySelector("[data-chat-input]");
+                    if (chatInput && document.activeElement === chatInput) {
+                        chatInput.blur();
+                    }
+                }
+            });
+        </script>
+    </body>
 </html>
